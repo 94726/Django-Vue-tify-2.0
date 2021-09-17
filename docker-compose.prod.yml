@@ -4,7 +4,7 @@ services:
   web:
     build:
       context: .
-      dockerfile: ./docker/dev.Dockerfile
+      dockerfile: ./docker/prod.Dockerfile
     command: ./entrypoint.sh
     volumes:
       - staticfiles:/code/staticfiles
@@ -16,10 +16,8 @@ services:
     image: postgres:13.0-alpine
     volumes:
       - postgres_db:/var/lib/postgresql/data
-    #    environment:
-    #      - POSTGRES_USER=postgres
-    #      - POSTGRES_PASSWORD=postgres
-    #      - POSTGRES_DB=postgres
+    env_file:
+      - .env.prod
     ports:
       - "5432:5432"
   nginx:
