@@ -1,9 +1,11 @@
 module.exports = {
     publicPath: process.env.NODE_ENV === 'production' ? '/static/dist/' : 'http://127.0.0.1:8080',
-    outputDir: '../staticfiles/dist',
+    // outputDir: '../staticfiles/dist',
+    outputDir: './build/dist',
 
     // relative to outputDir!
-    indexPath: '../../templates/base-vue.html',
+    // indexPath: '../../templates/base-vue.html',
+    indexPath: '../templates/base-vue.html',
 
     configureWebpack: {
         devServer: {

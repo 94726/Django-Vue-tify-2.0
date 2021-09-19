@@ -1,19 +1,38 @@
-FROM nikolaik/python-nodejs:python3.9-nodejs16-slim
+FROM node:16-alpine as node
 
+WORKDIR /frontend
+
+COPY ./frontend/ .
+
+RUN npm install
+
+RUN npm run build
+
+FROM python:3.9.6-slim-buster as django
 ENV PYTHONUNBUFFERED=1
 
 WORKDIR /code
 
 RUN pip install --upgrade pip
-COPY requirements.txt /code/requirements.txt
 
-RUN pip install -r requirements.txt
+COPY /requirements.txt /code/requirements.txt
+COPY /apps ./apps/
+COPY /django_settings ./django_settings/
+COPY /templates ./templates/
+COPY /manage.py .
 
-COPY frontend/package.json /code/frontend/package.json
+RUN pip install -r ./requirements.txt
 
-RUN npm install --prefix ./frontend
+RUN python manage.py migrate --no-input
+RUN python manage.py collectstatic --no-input
 
-COPY . /code/
+COPY --from=node /frontend/build/templates ./templates/
+COPY --from=node /frontend/build/dist ./staticfiles/dist/
 
-#RUN python manage.py collectstatic --noinput
-#RUN npm run build --prefix ./frontend
+FROM nginx:alpine as nginx
+
+COPY ./nginx.conf /etc/nginx/conf.d/default.conf
+COPY --from=django /code/staticfiles /staticfiles
+
+
+#COPY . /code/
