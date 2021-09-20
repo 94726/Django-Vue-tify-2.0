@@ -75,8 +75,8 @@ WSGI_APPLICATION = 'django_settings.wsgi.application'
 
 DATABASES = {
     'default': {
-        "ENGINE": os.environ.get("POSTGRES_ENGINE", "django.db.backends.sqlite3"),
-        "NAME": os.environ.get("POSTGRES_DATABASE", BASE_DIR / "db.sqlite3"),
+        "ENGINE": os.environ.get("SQL_ENGINE", "django.db.backends.sqlite3"),
+        "NAME": os.environ.get("SQL_DATABASE", BASE_DIR / "db.sqlite3"),
         "USER": os.environ.get("POSTGRES_USER", "user"),
         "PASSWORD": os.environ.get("POSTGRES_PASSWORD", "password"),
         "HOST": os.environ.get("POSTGRES_HOST", "localhost"),
