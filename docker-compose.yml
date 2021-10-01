@@ -1,40 +1,52 @@
 version: "3.8"
 
 services:
-  web:
-    build:
-      context: .
-      dockerfile: ./docker/dev.Dockerfile
-    env_file:
-      - ./.env.dev
-    volumes:
-      - .:/code
-      - /code/frontend/node_modules/
   db:
-    image: postgres:13.0-alpine
+    image: postgres:13-alpine
     volumes:
       - postgres_db:/var/lib/postgresql/data
     env_file:
       - .env.dev
-    ports:
-      - "5432:5432"
+    expose:
+      - "5432"
   backend:
-    extends:
-      service: web
-    command: python manage.py runserver 0.0.0.0:8000
+    build:
+      context: .
+      dockerfile: ./docker/dev.Dockerfile
+      target: django
+#      args:
+#        - http_proxy=...
+#        - https_proxy=...
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    env_file:
+      - .env.dev
+    environment:
+      WAIT_HOSTS: db:5432
     volumes:
+      - .:/code
       - /code/frontend/
-    depends_on:
-      - db
     ports:
       - "8000:8000"
+    depends_on:
+      - db
   frontend:
-    extends:
-      service: web
-    working_dir: /code/frontend
-    command: npm run serve
+    build:
+      context: .
+      dockerfile: ./docker/dev.Dockerfile
+      target: node
+#      args:
+#        - http_proxy=...
+#        - https_proxy=...
+    volumes:
+      - ./frontend:/frontend/
+      - ./templates:/frontend/build/templates/
+      - /frontend/build
+      - /frontend/node_modules/
     ports:
       - "8080:8080"
+    env_file:
+      - .env.dev
 
 volumes:
   postgres_db:
