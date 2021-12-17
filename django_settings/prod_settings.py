@@ -1,7 +1,7 @@
 from .base_settings import *
 
 # TODO create csrf token, run python manage.py check --deploy for more security checks
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_ROOT = '/staticfiles'
 DEBUG = False
 
 CSRF_COOKIE_SECURE = True

@@ -16,10 +16,14 @@ ENV DJANGO_SETTINGS_MODULE=django_settings.prod_settings
 
 WORKDIR /code
 
+ADD https://github.com/ufoscout/docker-compose-wait/releases/download/2.9.0/wait /wait
+RUN chmod +x /wait
+
 RUN pip install --upgrade pip
 
 COPY ./requirements.txt ./requirements.txt
 RUN pip install -r ./requirements.txt
+
 
 COPY /apps ./apps/
 COPY /django_settings ./django_settings/
@@ -29,9 +33,6 @@ COPY /manage.py .
 RUN python manage.py collectstatic --no-input
 
 COPY --from=node /frontend/build/templates ./templates
-COPY --from=node /frontend/build/dist /code/staticfiles/dist
-
-ADD https://github.com/ufoscout/docker-compose-wait/releases/download/2.9.0/wait /wait
-RUN chmod +x /wait
+COPY --from=node /frontend/build/dist /staticfiles/dist
 
 CMD bash -c '/wait && python manage.py migrate; gunicorn django_settings.wsgi:application --bind 0.0.0.0:8000'

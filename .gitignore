@@ -3,3 +3,4 @@
 /frontend/node_modules
 /venv/
 /templates/base-vue.html
+/frontend/package-lock.json

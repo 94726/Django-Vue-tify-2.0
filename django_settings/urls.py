@@ -17,10 +17,15 @@ from django.conf.urls import url
 from django.contrib import admin
 from django.urls import path
 from django.views.generic import TemplateView
+from django.conf.urls.static import static
+from django_settings.base_settings import MEDIA_URL, MEDIA_ROOT
+
 
 # Add new urls above the index.html TemplateViews
+
+
 urlpatterns = [
     path('admin/', admin.site.urls),
-    url(r'^.*/$', TemplateView.as_view(template_name='index.html')),
+    *static(MEDIA_URL, document_root=MEDIA_ROOT), # for development
     url(r'', TemplateView.as_view(template_name='index.html')),
 ]
