@@ -18,7 +18,7 @@ services:
 #        - http_proxy=...
 #        - https_proxy=...
     # workaround to add staticfiles/media to volume for nginx
-    command: bash -c '/wait && cp -r /staticfiles/* /staticfiles_volume/; cp -r /media/* /media_volume/; python manage.py migrate; gunicorn django_settings.wsgi:application --bind 0.0.0.0:8000'
+    command: bash -c '/wait && cp -r /staticfiles/* /staticfiles_volume/; python manage.py migrate; gunicorn django_settings.wsgi:application --bind 0.0.0.0:8000'
     extra_hosts:
       - "host.docker.internal:host-gateway"
     env_file:
@@ -27,7 +27,7 @@ services:
       WAIT_HOSTS: db:5432
     volumes:
       - staticfiles:/staticfiles_volume
-      - media:/media_volume
+      - media:/media
     expose:
       - "8000"
     depends_on:
